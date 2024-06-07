@@ -1,8 +1,9 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 
-import {Storage} from './storage/storage';
+import {Storage, UserNotFoundError} from './storage/storage';
 import {CustomerModel} from './model/customer';
+
 
 
 const port: string | number = process.env.port || 5000;
@@ -56,13 +57,28 @@ app.get('/customers/:id', async (req, res) => {
         return res.json(cutomer);
     } catch (error) {
         console.error(error);
+        if (error instanceof UserNotFoundError) {
+            return res.status(500).json({'error': 'User not found'});
+        }
         return res.status(500).json({'error': 'Internal error'});
     }
 });
 
-// app.patch('/customers', async (req, res) => {
+app.delete('/customers/:id', async (req, res) => {
+    try {
+        let customerID: string = req.params.id;
+        
+        await storage.remove(customerID);
 
-// });
+        return res.json();
+    } catch (error) {
+        console.error(error);
+        if (error instanceof UserNotFoundError) {
+            return res.status(500).json({'error': 'User not found'});
+        }
+        return res.status(500).json({'error': 'Internal error'});
+    }
+});
 
 app.delete('/customers', async (req, res) => {
 

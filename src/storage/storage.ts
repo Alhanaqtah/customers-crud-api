@@ -2,6 +2,13 @@ import {Collection, MongoClient, ObjectId} from 'mongodb';
 
 import {CustomerModel} from '../model/customer';
 
+export class UserNotFoundError extends Error {
+    constructor() {
+        super('User not found');
+        this.name = 'UserNotFoundError';
+    }
+}
+
 export class Storage {
     collection!: Collection;
 
@@ -55,6 +62,17 @@ export class Storage {
             }
 
             return c;
+        } catch(error) {
+            throw error;
+        }
+    }
+
+    async remove(customerID: string): Promise<void> {
+        try {
+            let deleted: boolean = Boolean((await this.collection.deleteOne({'_id': new ObjectId(customerID)})).deletedCount);
+            if (!deleted) {
+                throw new UserNotFoundError;
+            }
         } catch(error) {
             throw error;
         }
