@@ -1,4 +1,4 @@
-import {Collection, MongoClient} from 'mongodb';
+import {Collection, MongoClient, ObjectId} from 'mongodb';
 
 import {CustomerModel} from '../model/customer';
 
@@ -29,12 +29,34 @@ export class Storage {
         }
     }
 
-    // async getAll(customerInfo: CustomerModel): Promise<CustomerModel[]> {
-    //     try {
-    //         let customerID: string = (await this.collection.find;
-    //         return customerID;
-    //     } catch(error) {
-    //         throw error;
-    //     }
-    // }
+    async getAll(): Promise<CustomerModel[]> {
+        try {
+            let customers: any[] = await this.collection.find().toArray();
+            return customers;
+        } catch(error) {
+            throw error;
+        }
+    }
+
+    async get(customerID: string): Promise<CustomerModel | null> {
+        try {
+            let customer = await this.collection.findOne({'_id': new ObjectId(customerID)});
+            if (customer === null) {
+                throw new Error('User not found');
+            }
+            
+            let c: CustomerModel = {
+                name: customer.name,
+                surname: customer.surname,
+                patronomic: customer.patronomic || null,
+                address: customer.address || null,
+                email: customer.email || null,
+                age: customer.age || null,
+            }
+
+            return c;
+        } catch(error) {
+            throw error;
+        }
+    }
 }

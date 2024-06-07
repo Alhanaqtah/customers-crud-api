@@ -32,16 +32,33 @@ app.post('/customers', async (req, res) => {
     }
 });
 
-// app.get('/customers', async (req, res) => {
-//     try {
-//         let cutomers: CustomerModel[] = await storage.getAll();
+app.get('/customers', async (req, res) => {
+    try {
+        let cutomers: any[] = await storage.getAll();
 
-//         return res.json(cutomers);
-//     } catch (error) {
-//         console.error(error);
-//         return res.status(500).json({'error': 'Internal error'});
-//     }
-// });
+        return res.json(cutomers);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({'error': 'Internal error'});
+    }
+});
+
+app.get('/customers/:id', async (req, res) => {
+    try {
+        let customerID: string = req.params.id;
+
+        let cutomer: CustomerModel | null = await storage.get(customerID);
+
+        if (cutomer === null) {
+            return res.status(404).json({ 'error': 'Customer not found' });
+        }
+
+        return res.json(cutomer);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({'error': 'Internal error'});
+    }
+});
 
 // app.patch('/customers', async (req, res) => {
 
