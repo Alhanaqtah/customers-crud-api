@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb"
 
 export type CustomerModel = {
-    id?: ObjectId, 
+    id?: string, 
     name: string,
     surname: string,
     patronomic?: string,

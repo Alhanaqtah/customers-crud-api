@@ -77,4 +77,15 @@ export class Storage {
             throw error;
         }
     }
+
+    async update(customerInfo: CustomerModel): Promise<void> {
+        try {
+            let modified: boolean = Boolean((await this.collection.updateOne({'_id': new ObjectId(customerInfo.id!)}, {$set:customerInfo})).modifiedCount)
+            if (!modified) {
+                throw new UserNotFoundError();
+            }
+        } catch(error) {
+            throw error;
+        }
+    }
 }

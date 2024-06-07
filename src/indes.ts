@@ -64,6 +64,23 @@ app.get('/customers/:id', async (req, res) => {
     }
 });
 
+app.patch('/customers/:id', async (req, res) => {
+    try {
+        let customerInfo: CustomerModel = req.body;
+        customerInfo.id = req.params.id;
+
+        await storage.update(customerInfo);
+
+        return res.json();
+    } catch (error) {
+        console.error(error);
+        if (error instanceof UserNotFoundError) {
+            return res.status(500).json({'error': 'User not found'});
+        }
+        return res.status(500).json({'error': 'Internal error'});
+    }
+});
+
 app.delete('/customers/:id', async (req, res) => {
     try {
         let customerID: string = req.params.id;
@@ -78,10 +95,6 @@ app.delete('/customers/:id', async (req, res) => {
         }
         return res.status(500).json({'error': 'Internal error'});
     }
-});
-
-app.delete('/customers', async (req, res) => {
-
 });
 
 const server = app.listen(port, () => {
