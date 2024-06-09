@@ -19,7 +19,7 @@ export class Storage {
     async connect(connURL: string): Promise<void> {
         try {
             const client = await MongoClient.connect(connURL);
-            let db = client.db('costomers-crud-db');
+            let db = client.db('customers-crud-db');
             this.collection = db.collection('customers');
             console.log('Connected successfully to storage!');
         } catch(error) {
